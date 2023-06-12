@@ -1,0 +1,16 @@
+﻿{
+   "preprocess": {
+      "consistency": {
+         "user_session": [
+            "user_id"
+         ],
+         "category_id": [
+            "category_code"
+         ],
+         "product_id": [
+            "category_id",
+            "brand"
+         ]
+      }
+   }
+}
