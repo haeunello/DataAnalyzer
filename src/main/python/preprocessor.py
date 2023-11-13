@@ -35,6 +35,11 @@ class Preprocessor:
         abnormal_details = get_case_details(abnormal_cases)
         return abnormal_details
 
+    def filter_purchase_date(self, purchase_col):
+        filtered_df = self.data.loc[self.data[purchase_col] == "purchase"].copy()
+        save_csv(filtered_df, "./data/purchase_data.csv")
+        return filtered_df
+
 
 if __name__ == "__main__":
     data = load_csv(
@@ -45,4 +50,5 @@ if __name__ == "__main__":
     )
     params = load_json("./params/param_test.json")
     p = Preprocessor(data, params)
-    print(p.check_data_consistency())
+    # print(p.check_data_consistency())
+    p.filter_purchase_date("event_type")

@@ -22,6 +22,10 @@ def save_json(data, dir):
         )
 
 
+def save_csv(data, dir, encoding="utf8"):
+    data.to_csv(dir, encoding=encoding, index=False)
+
+
 if __name__ == "__main__":
     data = load_csv(
         "./data",
