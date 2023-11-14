@@ -35,10 +35,27 @@ class Preprocessor:
         abnormal_details = get_case_details(abnormal_cases)
         return abnormal_details
 
-    def filter_purchase_date(self, purchase_col):
-        filtered_df = self.data.loc[self.data[purchase_col] == "purchase"].copy()
+    def add_upper_category_column(self):
+        # category_code가 세분화되어 있어서, 상위 category 컬럼 생성
+        added_data = self.data.copy()
+        added_data.loc[
+            (~added_data["category_code"].isna())
+            & (added_data["category_code"].str.contains(".")),
+            "upper_category",
+        ] = (
+            added_data["category_code"].str.split(".").str[0]
+        )
+        return added_data
+
+    def filter_purchase_date(self, data, purchase_col):
+        filtered_df = data.loc[data[purchase_col] == "purchase"].copy()
         save_csv(filtered_df, "./data/purchase_data.csv")
         return filtered_df
+
+    def run(self):
+        data = self.add_upper_category_column()
+        data = self.filter_purchase_date(data, "event_type")
+        return "Completed"
 
 
 if __name__ == "__main__":
@@ -51,4 +68,4 @@ if __name__ == "__main__":
     params = load_json("./params/param_test.json")
     p = Preprocessor(data, params)
     # print(p.check_data_consistency())
-    p.filter_purchase_date("event_type")
+    p.run()
