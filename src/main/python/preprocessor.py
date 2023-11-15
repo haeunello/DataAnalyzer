@@ -35,9 +35,17 @@ class Preprocessor:
         abnormal_details = get_case_details(abnormal_cases)
         return abnormal_details
 
-    def add_upper_category_column(self):
+    def add_date_columns(self, data):
+        # 시간, 일자, 주차 컬럼 생성
+        added_data = data.copy()
+        added_data["hour"] = added_data["event_time"].dt.hour
+        added_data["date"] = added_data["event_time"].dt.date
+        added_data["week_number"] = added_data["event_time"].dt.isocalendar().week
+        return added_data
+
+    def add_upper_category_column(self, data):
         # category_code가 세분화되어 있어서, 상위 category 컬럼 생성
-        added_data = self.data.copy()
+        added_data = data.copy()
         added_data.loc[
             (~added_data["category_code"].isna())
             & (added_data["category_code"].str.contains(".")),
@@ -53,7 +61,8 @@ class Preprocessor:
         return filtered_df
 
     def run(self):
-        data = self.add_upper_category_column()
+        data = self.add_date_columns(self.data)
+        data = self.add_upper_category_column(data)
         data = self.filter_purchase_date(data, "event_type")
         return "Completed"
 
