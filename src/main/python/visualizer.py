@@ -106,7 +106,7 @@ class Visualizer:
 if __name__ == "__main__":
     data = load_csv(
         "./data",
-        "purchase_data.csv",
+        "purchase_events.csv",
         ["event_time"],
         "utf8",
     )

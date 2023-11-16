@@ -55,15 +55,24 @@ class Preprocessor:
         )
         return added_data
 
-    def filter_purchase_date(self, data, purchase_col):
+    def filter_only_purchase_events(self, data, purchase_col):
+        # 구매 이벤트만 필터링
         filtered_df = data.loc[data[purchase_col] == "purchase"].copy()
-        save_csv(filtered_df, "./data/purchase_data.csv")
-        return filtered_df
+        save_csv(filtered_df, "./data/purchase_events.csv")
+
+    def filter_purchase_session_events(self, data, purchase_col):
+        # 구매한 user session 이벤트 필터링
+        session_list = data.loc[
+            data[purchase_col] == "purchase", "user_session"
+        ].unique()
+        filtered_df = data.loc[data["user_session"].isin(session_list)].copy()
+        save_csv(filtered_df, "./data/purchase_session_events.csv")
 
     def run(self):
         data = self.add_date_columns(self.data)
         data = self.add_upper_category_column(data)
-        data = self.filter_purchase_date(data, "event_type")
+        self.filter_only_purchase_events(data, "event_type")
+        self.filter_purchase_session_events(data, "event_type")
         return "Completed"
 
 
