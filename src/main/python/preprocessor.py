@@ -68,6 +68,14 @@ class Preprocessor:
         filtered_df = data.loc[data["user_session"].isin(session_list)].copy()
         save_csv(filtered_df, "./data/purchase_session_events.csv")
 
+    def calculate_conversion_rate(self, data, inflow_col, event_type_col):
+        user_session_cnt = data[inflow_col].nunique()
+        purchase_cnt = data.loc[
+            data[event_type_col] == "purchase", inflow_col
+        ].nunique()
+        cvr = np.round(purchase_cnt / user_session_cnt, 2)
+        return cvr
+
     def run(self):
         data = self.add_date_columns(self.data)
         data = self.add_upper_category_column(data)
@@ -86,4 +94,6 @@ if __name__ == "__main__":
     params = load_json("./params/param_test.json")
     p = Preprocessor(data, params)
     # print(p.check_data_consistency())
-    p.run()
+    # p.run()
+    cvr = p.calculate_conversion_rate(data, "user_session", "event_type")
+    print(cvr)
